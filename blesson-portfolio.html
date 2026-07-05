@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blesson — Wall Artist, Chennai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14141a;
+    --paper:#ffffff;
+    --pink:#ff2d6b;
+    --blue:#2f5dff;
+    --yellow:#ffc93c;
+    --grey:#6b6b72;
+    --hair:#e9e9ec;
+    --max:1240px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    font-weight:400;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Anton', sans-serif;
+    font-weight:400;
+    text-transform:uppercase;
+    margin:0;
+    letter-spacing:0.5px;
+  }
+  .mono{
+    font-family:'JetBrains Mono', monospace;
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+    font-size:12px;
+  }
+  a{color:inherit;}
+  img{display:block; max-width:100%;}
+
+  /* NAV */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--hair);
+  }
+  .nav-inner{
+    max-width:var(--max); margin:0 auto;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 24px;
+  }
+  .nav-mark{
+    font-family:'Anton', sans-serif; font-size:20px; letter-spacing:1px;
+  }
+  .nav-mark span{color:var(--pink);}
+  nav ul{
+    list-style:none; display:flex; gap:28px; margin:0; padding:0;
+  }
+  nav a{ text-decoration:none; }
+  nav a:hover{ color:var(--pink); }
+  .nav-toggle{ display:none; }
+
+  /* HERO */
+  .hero{
+    padding:150px 24px 0;
+    max-width:var(--max); margin:0 auto;
+    position:relative;
+  }
+  .hero-eyebrow{ color:var(--grey); margin-bottom:18px; }
+  .hero h1{
+    font-size:clamp(56px, 11vw, 148px);
+    line-height:0.86;
+  }
+  .hero h1 .tag{
+    position:relative; color:var(--ink); display:inline-block;
+  }
+  .hero h1 .tag svg{
+    position:absolute; left:-2%; bottom:-0.12em; width:104%; height:0.35em;
+    z-index:-1;
+  }
+  .hero-sub{
+    display:flex; flex-wrap:wrap; gap:10px 28px; align-items:baseline;
+    margin-top:26px; padding-bottom:56px; border-bottom:1px solid var(--hair);
+    color:var(--grey);
+  }
+  .hero-sub strong{ color:var(--ink); font-weight:600; }
+  .hero-strip{
+    display:grid; grid-template-columns:repeat(5,1fr); gap:6px;
+    margin:0 0 0;
+    padding:6px 0 0;
+  }
+  .hero-strip img{
+    height:120px; width:100%; object-fit:cover;
+    filter:grayscale(15%);
+    transition:filter .3s ease, transform .3s ease;
+  }
+  .hero-strip img:hover{ filter:grayscale(0%); transform:scale(1.03); }
+
+  /* SECTION SHELL */
+  section{
+    max-width:var(--max); margin:0 auto; padding:96px 24px;
+  }
+  .section-head{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    gap:24px; margin-bottom:40px; border-bottom:2px solid var(--ink); padding-bottom:18px;
+  }
+  .section-head .num{ color:var(--pink); }
+  .section-head h2{ font-size:clamp(32px,5vw,56px); }
+  .section-head p{ max-width:360px; color:var(--grey); font-size:14px; margin:0; }
+
+  /* GALLERY GRID — true masonry: JS measures each image and sets its row-span,
+     so every tile keeps left-to-right reading order and its own correct proportions */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+    grid-auto-rows:8px;
+    gap:18px;
+  }
+  .cell{
+    position:relative; overflow:hidden; background:#f2f2f4; cursor:zoom-in;
+  }
+  .cell img{
+    width:100%; height:auto; display:block;
+    transition:transform .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .cell:hover img{ transform:scale(1.04); }
+  .cell .cap{
+    position:absolute; left:0; right:0; bottom:0;
+    padding:10px 12px;
+    background:linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0));
+    color:#fff; font-size:11px;
+    opacity:0; transition:opacity .25s ease;
+  }
+  .cell:hover .cap{ opacity:1; }
+
+  /* full-width break-out for collages/panoramas */
+  .cell-full{ grid-column:1 / -1; }
+  .cell-full img{ width:100%; height:auto; max-height:640px; object-fit:cover; }
+
+  @media (max-width:640px){
+    .grid{ grid-template-columns:1fr; }
+  }
+
+  /* PROCESS / STORY */
+  .story{
+    display:grid; grid-template-columns:1.1fr 0.9fr; gap:64px; align-items:center;
+  }
+  .story img{ width:100%; aspect-ratio:4/5; object-fit:cover; }
+  .story p{ line-height:1.7; color:#2c2c33; font-size:16px; margin:0 0 18px; }
+  .stat-row{ display:flex; gap:36px; margin-top:32px; flex-wrap:wrap; }
+  .stat{ }
+  .stat b{ font-family:'Anton',sans-serif; font-size:40px; display:block; color:var(--pink); }
+  .stat span{ color:var(--grey); font-size:12px; }
+
+  /* CLIENTS STRIP */
+  .clients{
+    border-top:1px solid var(--hair); border-bottom:1px solid var(--hair);
+    padding:32px 24px;
+  }
+  .clients-inner{
+    max-width:var(--max); margin:0 auto;
+    display:flex; flex-wrap:wrap; gap:14px; justify-content:space-between; align-items:center;
+  }
+  .chip{
+    font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.08em;
+    border:1px solid var(--ink); padding:8px 14px; border-radius:999px;
+  }
+
+  /* CONTACT */
+  .contact{
+    text-align:left;
+  }
+  .contact h2{ font-size:clamp(40px,8vw,96px); margin-bottom:24px; }
+  .contact-grid{
+    display:grid; grid-template-columns:1.2fr 0.8fr; gap:48px;
+  }
+  .contact-links{ display:flex; flex-direction:column; gap:10px; margin-top:24px;}
+  .contact-links a{
+    text-decoration:none; font-size:20px; font-weight:500; border-bottom:1px solid transparent;
+    width:fit-content;
+  }
+  .contact-links a:hover{ border-color:var(--ink); color:var(--pink); border-color:var(--pink); }
+  .note{
+    font-size:12px; color:var(--grey); margin-top:26px; max-width:420px; line-height:1.6;
+  }
+  footer{
+    padding:28px 24px; text-align:center; color:var(--grey); font-size:12px;
+    border-top:1px solid var(--hair);
+  }
+
+  /* LIGHTBOX */
+  .lightbox{
+    position:fixed; inset:0; background:rgba(10,10,12,0.94);
+    display:none; align-items:center; justify-content:center; z-index:1000;
+    padding:40px;
+  }
+  .lightbox.active{ display:flex; }
+  .lightbox img{ max-width:100%; max-height:88vh; object-fit:contain; }
+  .lightbox-close{
+    position:absolute; top:24px; right:32px; color:#fff; font-size:32px; cursor:pointer;
+    font-family:'Anton',sans-serif;
+  }
+
+  @media (max-width: 860px){
+    nav ul{ display:none; }
+    .hero-strip{ grid-template-columns:repeat(3,1fr); }
+    .hero-strip img:nth-child(n+4){ display:none; }
+    .story{ grid-template-columns:1fr; gap:32px; }
+    .contact-grid{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-inner">
+    <div class="nav-mark">BLESSON<span>.</span></div>
+    <nav>
+      <ul>
+        <li><a href="#walls">Walls</a></li>
+        <li><a href="#lettering">Lettering</a></li>
+        <li><a href="#fineart">Fine Art</a></li>
+        <li><a href="#brands">Brand Work</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero" style="padding-bottom:0;">
+    <div class="hero-eyebrow mono">Wall artist &amp; muralist — Chennai, India</div>
+    <h1>
+      Paint<br>
+      the <span class="tag">city<svg viewBox="0 0 300 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 30 C 60 5, 120 38, 180 15 S 280 30, 298 12" stroke="#ff2d6b" stroke-width="10" fill="none" stroke-linecap="round"/></svg></span> loud.
+    </h1>
+    <div class="hero-sub">
+      <div><strong>10+ years</strong> painting walls, trucks &amp; interiors</div>
+      <div><strong>Murals · Lettering · Portraits · Brand campaigns</strong></div>
+      <div><strong>Based in</strong> Chennai — working across India</div>
+    </div>
+    <div class="hero-strip">
+      <img src="images/Blesson1.png" alt="Blesson painting a graffiti wall">
+      <img src="images/parrot.png" alt="Macaw mural">
+      <img src="images/Lion.png" alt="Colourful lion painting">
+      <img src="images/Dog Cafe.png" alt="Pop art dog portrait">
+      <img src="images/Krishna.png" alt="Radha Krishna illustration">
+    </div>
+  </section>
+
+  <!-- STORY -->
+  <section>
+    <div class="story">
+      <img src="images/Blesson2.png" alt="Blesson spray painting a wall piece">
+      <div>
+        <div class="mono" style="color:var(--grey); margin-bottom:16px;">01 — About</div>
+        <h2 style="font-size:clamp(28px,4vw,44px); margin-bottom:20px;">From spray cans to full interiors.</h2>
+        <p>Blesson started with letters on concrete and has carried that same energy into murals, portraits, and full commercial interiors. Every wall gets treated like a canvas — the scale just changes.</p>
+        <p>The work ranges from freehand graffiti pieces and character murals to fine-art portraits, cafe interior schemes, and branded campaign walls for clients who want their space to say something.</p>
+        <div class="stat-row">
+          <div class="stat"><b>150+</b><span class="mono">Walls painted</span></div>
+          <div class="stat"><b>30+</b><span class="mono">Brand collabs</span></div>
+          <div class="stat"><b>6</b><span class="mono">Cities</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WALLS / MURALS -->
+  <section id="walls">
+    <div class="section-head">
+      <div>
+        <div class="mono num" style="margin-bottom:10px;">02 / Murals</div>
+        <h2>Walls &amp; Murals</h2>
+      </div>
+      <p>Large-scale wall pieces — from wildlife and characters to full-room cafe interiors.</p>
+    </div>
+    <div class="grid">
+      <div class="cell"><img src="images/parrot.png" alt="Macaw mural"><div class="cap mono">Macaw mural</div></div>
+      <div class="cell"><img src="images/Mermaid.png" alt="Mermaid mural"><div class="cap mono">Mermaid mural</div></div>
+      <div class="cell"><img src="images/Pillair.png" alt="Monstera leaf archway mural"><div class="cap mono">Archway foliage</div></div>
+      <div class="cell"><img src="images/Flower.png" alt="Floral wall mural"><div class="cap mono">Floral feature wall</div></div>
+      <div class="cell"><img src="images/Gaming Cafe.png" alt="Gaming cafe interior mural"><div class="cap mono">Gaming cafe interior</div></div>
+      <div class="cell"><img src="images/Dog Cafe 2.png" alt="Dog cafe feature wall"><div class="cap mono">Dog cafe feature wall</div></div>
+      <div class="cell"><img src="images/Buddha.png" alt="Buddha mural"><div class="cap mono">Buddha mural</div></div>
+      <div class="cell-full"><img src="images/collage1.png" alt="Mural collection collage"></div>
+    </div>
+  </section>
+
+  <!-- LETTERING / GRAFFITI -->
+  <section id="lettering" style="background:#fafafb;">
+    <div class="section-head">
+      <div>
+        <div class="mono num" style="margin-bottom:10px;">03 / Lettering</div>
+        <h2>Graffiti &amp; Lettering</h2>
+      </div>
+      <p>Freehand pieces, tags, and full lettering walls — where it all began.</p>
+    </div>
+    <div class="grid">
+      <div class="cell"><img src="images/wall.png" alt="Graffiti lettering wall piece"><div class="cap mono">Wall piece</div></div>
+      <div class="cell"><img src="images/street.png" alt="Graffiti lettering street piece"><div class="cap mono">Street piece</div></div>
+      <div class="cell"><img src="images/street2.png" alt="Graffiti lettering street piece 2"><div class="cap mono">Street piece</div></div>
+      <div class="cell"><img src="images/Blesson1.png" alt="Blesson painting a lettering wall"><div class="cap mono">On location</div></div>
+      <div class="cell"><img src="images/Blesson2.png" alt="Blesson finishing a wall piece"><div class="cap mono">On location</div></div>
+      <div class="cell-full"><img src="images/Collage2.png" alt="Graffiti lettering collage"></div>
+    </div>
+  </section>
+
+  <!-- FINE ART / PORTRAITS -->
+  <section id="fineart">
+    <div class="section-head">
+      <div>
+        <div class="mono num" style="margin-bottom:10px;">04 / Fine Art</div>
+        <h2>Portraits &amp; Illustration</h2>
+      </div>
+      <p>Slower, detail-driven work — portraits, characters, and studio illustration.</p>
+    </div>
+    <div class="grid">
+      <div class="cell"><img src="images/Lion.png" alt="Colourful geometric lion painting"><div class="cap mono">Lion study</div></div>
+      <div class="cell"><img src="images/Krishna.png" alt="Radha Krishna watercolour illustration"><div class="cap mono">Radha Krishna</div></div>
+      <div class="cell"><img src="images/kathakali.png" alt="Kathakali illustration"><div class="cap mono">Kathakali study</div></div>
+      <div class="cell"><img src="images/Dog Cafe 2.png" alt="Pop art dog portrait close up"><div class="cap mono">Pop-art portrait</div></div>
+      <div class="cell-full"><img src="images/Collage3.png" alt="Portrait collection collage"></div>
+    </div>
+  </section>
+
+  <!-- BRAND WORK -->
+  <section id="brands" style="background:#fafafb;">
+    <div class="section-head">
+      <div>
+        <div class="mono num" style="margin-bottom:10px;">05 / Commercial</div>
+        <h2>Brand &amp; Commissioned Work</h2>
+      </div>
+      <p>Campaign walls, food trucks, and commercial interiors for brands and businesses.</p>
+    </div>
+    <div class="grid">
+      <div class="cell"><img src="images/Truck1.png" alt="Painted food truck 1"><div class="cap mono">Food truck</div></div>
+      <div class="cell"><img src="images/Truck2.png" alt="Painted food truck 2"><div class="cap mono">Food truck</div></div>
+      <div class="cell"><img src="images/Truck3.png" alt="Painted food truck cab detail"><div class="cap mono">Truck detail</div></div>
+      <div class="cell-full"><img src="images/Collage4.png" alt="Monster Energy branded artwork collage"></div>
+      <div class="cell"><img src="images/Akka pakka.png" alt="Restro-bar feature wall painting of a woman smoking"><div class="cap mono">Restro-bar feature wall</div></div>
+      <div class="cell"><img src="images/detailing.png" alt="Detailing Mafia branded wall"><div class="cap mono">Detailing Mafia — branded wall</div></div>
+      <div class="cell-full"><img src="images/collage5.png" alt="Commissioned work collage"></div>
+      <div class="cell-full"><img src="images/movie frames.png" alt="Hand-painted vintage cinema poster wall"></div>
+      <div class="cell"><img src="images/one eye.png" alt="Hand-painted vintage film poster 1"></div>
+      <div class="cell"><img src="images/chai1.png" alt="Hand-painted vintage film poster 2"></div>
+      <div class="cell"><img src="images/chai2.png" alt="Hand-painted vintage film poster 3"></div>
+      <div class="cell"><img src="images/hair akka.png" alt="Hand-painted vintage film poster 4"></div>
+    </div>
+  </section>
+
+  <!-- CLIENTS -->
+  <div class="clients">
+    <div class="clients-inner">
+      <span class="chip">Monster Energy</span>
+      <span class="chip">Truck Theory</span>
+      <span class="chip">Cookscape Interiors</span>
+      <span class="chip">Detailing Mafia</span>
+      <span class="chip">Private residences</span>
+      <span class="chip">Hospitality &amp; F&amp;B</span>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact">
+    <div class="contact-grid">
+      <div>
+        <div class="mono" style="color:var(--grey); margin-bottom:16px;">06 — Get in touch</div>
+        <h2>Got a wall<br>that needs one?</h2>
+        <div class="contact-links">
+          <a href="mailto:hello@blessonart.com">hello@blessonart.com</a>
+          <a href="tel:+910000000000">+91 00000 00000</a>
+          <a href="#" target="_blank" rel="noopener">Instagram — @blesson.art</a>
+        </div>
+        <div class="note">Email, phone, and Instagram handle above are placeholders — swap them for Blesson's real details before this goes live.</div>
+      </div>
+      <div>
+        <img src="images/collage5.png" alt="Graffiti collage" style="aspect-ratio:4/5; object-fit:cover;">
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  © <span id="year"></span> Blesson — Wall Art &amp; Illustration, Chennai. Site by BEDOXA Artifex.
+</footer>
+
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-close" id="lightboxClose">&times;</div>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // TRUE MASONRY: measure each image's rendered height and set how many
+  // grid rows it should span, so every tile sizes correctly to its own image.
+  function resizeGridItem(cell){
+    const grid = cell.closest('.grid');
+    if(!grid) return;
+    const rowHeight = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-auto-rows'));
+    const rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue('gap')) || 0;
+    const contentHeight = cell.getBoundingClientRect().height;
+    const rowSpan = Math.ceil((contentHeight + rowGap) / (rowHeight + rowGap));
+    cell.style.gridRowEnd = 'span ' + rowSpan;
+  }
+  function resizeAllGridItems(){
+    document.querySelectorAll('.grid .cell').forEach(resizeGridItem);
+  }
+  document.querySelectorAll('.grid .cell img').forEach(img => {
+    if (img.complete) {
+      resizeGridItem(img.closest('.cell'));
+    } else {
+      img.addEventListener('load', () => resizeGridItem(img.closest('.cell')));
+    }
+  });
+  window.addEventListener('load', resizeAllGridItems);
+  window.addEventListener('resize', resizeAllGridItems);
+
+  const cells = document.querySelectorAll('.cell img');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  cells.forEach(img => {
+    img.addEventListener('click', () => {
+      lightboxImg.src = img.src;
+      lightboxImg.alt = img.alt;
+      lightbox.classList.add('active');
+    });
+  });
+  document.getElementById('lightboxClose').addEventListener('click', () => {
+    lightbox.classList.remove('active');
+  });
+  lightbox.addEventListener('click', (e) => {
+    if(e.target === lightbox) lightbox.classList.remove('active');
+  });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape') lightbox.classList.remove('active');
+  });
+</script>
+
+</body>
+</html>
