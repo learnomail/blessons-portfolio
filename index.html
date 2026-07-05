@@ -68,7 +68,7 @@
 
   /* HERO */
   .hero{
-    padding:150px 24px 0;
+    padding:112px 24px 0;
     max-width:var(--max); margin:0 auto;
     position:relative;
   }
@@ -86,7 +86,7 @@
   }
   .hero-sub{
     display:flex; flex-wrap:wrap; gap:10px 28px; align-items:baseline;
-    margin-top:26px; padding-bottom:40px; border-bottom:1px solid var(--hair);
+    margin-top:20px; padding-bottom:24px; border-bottom:1px solid var(--hair);
     color:var(--grey);
   }
   .hero-sub strong{ color:var(--ink); font-weight:600; }
@@ -118,7 +118,6 @@
   .marquee-row + .marquee-row{ margin-top:8px; }
   .marquee-row.dir-left{ animation:marquee-left 52s linear infinite; }
   .marquee-row.dir-right{ animation:marquee-right 60s linear infinite; }
-  .hero-marquee-wrap:hover .marquee-row{ animation-play-state:paused; }
   .marquee-row figure{
     margin:0; position:relative; flex-shrink:0;
     height:128px; width:auto; overflow:hidden;
@@ -129,7 +128,7 @@
     filter:grayscale(20%);
     transition:filter .3s ease, transform .3s ease;
   }
-  .marquee-row figure:hover img{ filter:grayscale(0%); transform:scale(1.04); }
+  .marquee-row figure:hover img{ filter:grayscale(0%); }
   .marquee-row figcaption{
     position:absolute; left:8px; bottom:8px;
     padding:5px 10px;
@@ -155,7 +154,7 @@
 
   /* SECTION SHELL */
   section{
-    max-width:var(--max); margin:0 auto; padding:56px 24px;
+    max-width:var(--max); margin:0 auto; padding:36px 24px;
   }
   .section-head{
     display:flex; justify-content:space-between; align-items:flex-end;
@@ -498,6 +497,17 @@
 
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Pause only the row the cursor is actually over, driven by JS rather
+  // than a CSS :hover rule. A CSS-only pause on a moving element can
+  // register a frame or two late, so the cursor ends up hovering whichever
+  // image has drifted underneath it — flickering the hover state across
+  // neighbours. Setting animationPlayState directly on mouseenter/mouseleave
+  // is immediate and scoped to just that row.
+  document.querySelectorAll('.marquee-row').forEach(row => {
+    row.addEventListener('mouseenter', () => { row.style.animationPlayState = 'paused'; });
+    row.addEventListener('mouseleave', () => { row.style.animationPlayState = 'running'; });
+  });
 
   // TRUE MASONRY — no CSS columns, no CSS grid. Each tile has a data-ratio
   // (its real width/height, supplied upfront so we never depend on image
