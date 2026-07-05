@@ -99,12 +99,17 @@
      width via negative margins so it reads as a continuous belt of work
      rather than something boxed into the content column. */
   .hero-marquee-wrap{
-    width:100vw; position:relative; left:50%; margin-left:-50vw;
-    margin-top:0; padding-top:6px;
+    width:100%; position:relative;
+    padding-top:6px;
     overflow:hidden;
-    -webkit-mask-image:linear-gradient(90deg, transparent 0, #000 4%, #000 96%, transparent 100%);
-    mask-image:linear-gradient(90deg, transparent 0, #000 4%, #000 96%, transparent 100%);
   }
+  .hero-marquee-wrap::before,
+  .hero-marquee-wrap::after{
+    content:''; position:absolute; top:0; bottom:0; width:64px; z-index:2;
+    pointer-events:none;
+  }
+  .hero-marquee-wrap::before{ left:0; background:linear-gradient(90deg, var(--paper), transparent); }
+  .hero-marquee-wrap::after{ right:0; background:linear-gradient(270deg, var(--paper), transparent); }
   .marquee-row{
     display:flex; align-items:stretch; gap:8px;
     width:max-content;
@@ -112,7 +117,7 @@
   }
   .marquee-row + .marquee-row{ margin-top:8px; }
   .marquee-row.dir-left{ animation:marquee-left 52s linear infinite; }
-  .marquee-row.dir-right{ animation:marquee-right 60s linear infinite; transform:translateX(-50%); }
+  .marquee-row.dir-right{ animation:marquee-right 60s linear infinite; }
   .hero-marquee-wrap:hover .marquee-row{ animation-play-state:paused; }
   .marquee-row figure{
     margin:0; position:relative; flex-shrink:0;
@@ -326,7 +331,7 @@
     <div class="marquee-row dir-right">
       <figure><img src="images/Dog Cafe 2.png" alt="Pop art dog portrait"><figcaption>Pop-art portrait</figcaption></figure>
       <figure><img src="images/street.png" alt="Graffiti lettering street piece"><figcaption>Street piece</figcaption></figure>
-      <figure><img src="images/Akka pakka.png" alt="Feature wall painting"><figcaption>Feature wall</figcaption></figure>
+      <figure><img src="images/Akka pakka.png" alt="Restro-bar feature wall painting"><figcaption>Feature wall</figcaption></figure>
       <figure><img src="images/detailing.png" alt="Detailing Mafia branded wall"><figcaption>Detailing Mafia</figcaption></figure>
       <figure><img src="images/one eye.png" alt="3d wall painting"><figcaption>3d work</figcaption></figure>
       <figure><img src="images/Truck2.png" alt="Painted food truck"><figcaption>Food truck</figcaption></figure>
